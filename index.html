@@ -1233,20 +1233,24 @@
             if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; }
         }
 
-        // --- 9. SHAKE TO CALL (FIXED) ---
-        let shakeThreshold = 25; 
+        // --- 9. SHAKE TO CALL (UPDATED: VERY STABLE) ---
+        // ئەم ژمارەیە تا گەورەتر بێت، ئیشکردنەکەی قورستر دەبێت
+        // 25 = ئاسایی
+        // 40 = قورس (دەبێت بەهێز ڕایبوەشێنیت)
+        let shakeThreshold = 40; 
+        
         let lastShakeX = 0, lastShakeY = 0, lastShakeZ = 0;
         let lastShakeUpdate = 0;
         let lastCallTime = 0; 
         
-        // ئەمە گرنگە: 5 چرکە دەوەستێت ئینجا شەیک کار دەکات
+        // چوار چرکە دەوەستێت ئینجا چالاک دەبێت بۆ ئەوەی ڕاستەوخۆ ئیش نەکات
         let isShakeEnabled = false;
         setTimeout(() => {
             isShakeEnabled = true;
-        }, 5000); 
+        }, 4000); 
 
         window.addEventListener('devicemotion', function(event) {
-            // ئەگەر 5 چرکە تەواو نەبووبێت، هیچ مەکە
+            // تا 4 چرکە تێنەپەڕێت کۆدەکە ناخوێنێتەوە
             if (!isShakeEnabled) return;
 
             let acceleration = event.accelerationIncludingGravity;
