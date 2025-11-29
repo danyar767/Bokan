@@ -382,7 +382,7 @@
         .grid-icon { font-size: 1.8rem; color: var(--yellow); margin-bottom: 5px; }
         .grid-text { font-size: 0.9rem; font-weight: bold; }
 
-        /* --- Shop Gallery Style (NEW) --- */
+        /* --- Shop Gallery Style --- */
         .section-title { padding: 0 20px; margin-bottom: 15px; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
         .section-title::before { content: ''; width: 4px; height: 20px; background: var(--blue); border-radius: 2px; }
 
@@ -642,32 +642,6 @@
             background: linear-gradient(135deg, #00B4DB, #0083B0); 
             box-shadow: 0 4px 15px rgba(0, 180, 219, 0.4);
             border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        /* Shake Hint Text Style */
-        .shake-hint {
-            margin-top: 20px;
-            font-size: 0.85rem;
-            color: var(--yellow);
-            opacity: 0.9;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: rgba(255, 215, 0, 0.1);
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px dashed rgba(255, 215, 0, 0.3);
-        }
-        .shake-icon {
-            font-size: 1.2rem;
-            animation: shakeAnim 2s infinite;
-        }
-        @keyframes shakeAnim {
-            0%, 100% {transform: rotate(0deg);}
-            25% {transform: rotate(-15deg);}
-            75% {transform: rotate(15deg);}
         }
 
 
@@ -953,12 +927,6 @@
             <a href="tel:07507597461" class="sim-btn korek-btn">
                 <i class="fas fa-phone"></i> کۆڕەک
             </a>
-
-            <p class="shake-hint">
-                <i class="fas fa-mobile-alt shake-icon"></i> 
-                بۆ پەیوەندی خێرا بە کۆڕەک، مۆبایلەکەت ڕابوەشێنە!
-            </p>
-            
         </div>
     </div>
 
@@ -1232,65 +1200,6 @@
             if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { return false; }
             if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; }
         }
-
-        // --- 9. SHAKE TO CALL (UPDATED: VERY STABLE) ---
-        // ئەم ژمارەیە تا گەورەتر بێت، ئیشکردنەکەی قورستر دەبێت
-        // 25 = ئاسایی
-        // 40 = قورس (دەبێت بەهێز ڕایبوەشێنیت)
-        let shakeThreshold = 40; 
-        
-        let lastShakeX = 0, lastShakeY = 0, lastShakeZ = 0;
-        let lastShakeUpdate = 0;
-        let lastCallTime = 0; 
-        
-        // چوار چرکە دەوەستێت ئینجا چالاک دەبێت بۆ ئەوەی ڕاستەوخۆ ئیش نەکات
-        let isShakeEnabled = false;
-        setTimeout(() => {
-            isShakeEnabled = true;
-        }, 4000); 
-
-        window.addEventListener('devicemotion', function(event) {
-            // تا 4 چرکە تێنەپەڕێت کۆدەکە ناخوێنێتەوە
-            if (!isShakeEnabled) return;
-
-            let acceleration = event.accelerationIncludingGravity;
-            let curTime = new Date().getTime();
-
-            if ((curTime - lastShakeUpdate) > 100) {
-                let diffTime = curTime - lastShakeUpdate;
-                lastShakeUpdate = curTime;
-
-                let x = acceleration.x;
-                let y = acceleration.y;
-                let z = acceleration.z;
-
-                let speed = Math.abs(x + y + z - lastShakeX - lastShakeY - lastShakeZ) / diffTime * 10000;
-
-                if (speed > shakeThreshold) {
-                    let now = new Date().getTime();
-                    // 3-second cooldown
-                    if (now - lastCallTime > 3000) {
-                        lastCallTime = now;
-                        
-                        if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
-                        
-                        const toast = document.getElementById('customToast');
-                        const originalContent = toast.innerHTML;
-                        toast.innerHTML = '<i class="fas fa-phone-volume"></i> <span>پەیوەندی دەکرێت بە کۆڕەک...</span>';
-                        toast.classList.add('show');
-                        setTimeout(() => { 
-                            toast.classList.remove('show'); 
-                            setTimeout(() => { toast.innerHTML = originalContent; }, 500);
-                        }, 3000);
-
-                        window.location.href = "tel:07507597461";
-                    }
-                }
-                lastShakeX = x; lastShakeY = y; lastShakeZ = z;
-            }
-        });
-
-    </script>
 
     </script>
 </body>
