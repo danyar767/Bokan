@@ -6,6 +6,11 @@
     <title>A Center - Mobile Store</title>
     <meta name="description" content="باشترین سەنتەری مۆبایل - A Center">
     
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#09090b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon.png"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Noto+Kufi+Arabic:wght@400;700;900&display=swap" rel="stylesheet">
     
@@ -15,8 +20,11 @@
             --bg-dark: #09090b;
             --glass: rgba(255, 255, 255, 0.08);
             --border: rgba(255, 255, 255, 0.1);
-            --blue: #007bff;
-            --yellow: #ffd700;
+            
+            /* --- گۆڕانکاری ڕەنگەکان لێرە کراوە --- */
+            --blue: #0000FE;   /* شینی نوێ */
+            --yellow: #FEFF00; /* زەردی نوێ */
+            
             --text-main: #ffffff;
             --text-muted: #9ca3af;
         }
@@ -38,8 +46,8 @@
             min-height: 100vh;
             display: flex; justify-content: center;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 123, 255, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 40%);
+                radial-gradient(circle at 10% 20%, rgba(0, 0, 254, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(254, 255, 0, 0.1) 0%, transparent 40%);
             overflow-x: hidden;
         }
 
@@ -106,8 +114,8 @@
         @keyframes headerTextShimmer { to { background-position: 200% center; } }
 
         /* =========================================
-           --- CINEMATIC PRELOADER ---
-           ========================================= */
+            --- CINEMATIC PRELOADER ---
+            ========================================= */
         #preloader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 99999;
@@ -213,7 +221,7 @@
             font-weight: 700;
             margin-bottom: 10px;
             margin-top: 15px;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            text-shadow: 0 0 10px rgba(254, 255, 0, 0.3);
             animation: fadeInUp 1s ease forwards;
         }
 
@@ -242,52 +250,80 @@
         }
 
         /* Color Classes */
-        .t-blue { color: var(--blue); text-shadow: 0 0 15px rgba(0, 123, 255, 0.8); }
-        .t-yellow { color: var(--yellow); text-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+        .t-blue { color: var(--blue); text-shadow: 0 0 15px rgba(0, 0, 254, 0.8); }
+        .t-yellow { color: var(--yellow); text-shadow: 0 0 15px rgba(254, 255, 0, 0.8); }
 
-        /* LOGO SLIDESHOW */
+        /* --- LOGO SLIDESHOW & ANIMATED GLOW (UPDATED) --- */
         .hero-circle-logo {
-            width: 140px;
-            height: 140px;
-            margin: 0 auto 10px auto;
+            width: 145px;
+            height: 145px;
+            margin: 0 auto 15px auto;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            background: #000;
             border-radius: 50%;
-            border: 5px solid var(--blue);
-            border-bottom-color: var(--yellow); 
-            box-shadow: 0 0 35px rgba(0, 123, 255, 0.6);
-            overflow: hidden;
-            background: rgba(255, 255, 255, 0.05);
-            position: relative; 
-            animation: floatLogo 6s ease-in-out infinite;
-            transition: all 0.3s ease;
+            cursor: pointer;
         }
-        
+
+        /* Spinning Border/Glow Behind */
+        .hero-circle-logo::before, 
+        .hero-circle-logo::after {
+            content: '';
+            position: absolute;
+            left: -4px; top: -4px; right: -4px; bottom: -4px;
+            border-radius: 50%;
+            background: conic-gradient(
+                var(--blue), 
+                var(--yellow), 
+                var(--blue), 
+                var(--yellow)
+            );
+            z-index: -1;
+            animation: spinGlow 2.5s linear infinite;
+        }
+
+        /* Blur Effect for Glow */
+        .hero-circle-logo::after {
+            filter: blur(15px);
+            opacity: 0.7;
+        }
+
+        .hero-circle-logo:active {
+            transform: scale(0.95);
+        }
+
         .logo-slide-img {
-            width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 1s ease-in-out;
+            width: 100%; height: 100%; 
+            object-fit: cover; 
+            position: absolute; top: 0; left: 0; 
+            border-radius: 50%;
+            opacity: 0; 
+            transition: opacity 1s ease-in-out;
+            z-index: 2; /* In front of the glow */
         }
         .logo-slide-img.active { opacity: 1; }
         
-        @keyframes floatLogo {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+        @keyframes spinGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        /* --- MUSIC PLAYING ANIMATION FOR LOGO --- */
+        /* --- MUSIC PLAYING ANIMATION FOR LOGO (Beat Effect) --- */
         .logo-music-active {
             animation: musicPulseEffect 0.5s infinite alternate !important;
         }
+        /* When music is active, we pulse the whole container including glow */
+        .logo-music-active::before,
+        .logo-music-active::after {
+             animation: spinGlow 0.5s linear infinite !important; /* Spin faster on music */
+        }
 
         @keyframes musicPulseEffect {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 30px var(--blue);
-                border-color: var(--blue);
-            }
-            100% {
-                transform: scale(1.15); /* دڵ لێدان */
-                box-shadow: 0 0 80px var(--yellow), 0 0 40px var(--blue);
-                border-color: var(--yellow);
-            }
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
         }
 
         .hero-title {
@@ -301,19 +337,35 @@
         .hero .letter-a { font-size: 3.5rem; } 
         .hero .word-center { font-size: 2.2rem; } 
 
-        /* --- UPDATED TICKER TAPE --- */
+        /* --- UPDATED TICKER TAPE (شریتی جوڵاو) --- */
         .ticker-wrap {
             width: 100%; 
             overflow: hidden; 
-            background: linear-gradient(90deg, rgba(0, 123, 255, 0.2), rgba(255, 215, 0, 0.1));
+            background: linear-gradient(90deg, rgba(0, 0, 254, 0.2), rgba(254, 255, 0, 0.1));
             padding: 10px 0; 
             margin-bottom: 20px; 
             border-top: 1px solid rgba(255,255,255,0.1); 
             border-bottom: 1px solid rgba(255,255,255,0.1);
             backdrop-filter: blur(5px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            /* Min-height for stacked logo */
+            min-height: 60px;
+            display: flex;
+            align-items: center;
         }
-        .ticker { display: inline-block; white-space: nowrap; animation: ticker 40s linear infinite; }
+        
+        .ticker { 
+            display: inline-block; 
+            white-space: nowrap; 
+            animation: ticker 40s linear infinite; 
+            animation-play-state: paused;
+            opacity: 0; /* سەرەتا نادیارە */
+            transition: opacity 1s ease; /* بە هێواشی دەردەکەوێت */
+        }
+        
+        .ticker.show-ticker {
+            opacity: 1;
+        }
         
         .ticker-item { 
             display: inline-flex; 
@@ -324,34 +376,42 @@
             gap: 8px;
         }
         
-        /* New Style for Ticker Logo */
+        /* --- NEW STYLE FOR TICKER LOGO (STACKED) --- */
         .ticker-logo {
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
             display: inline-flex;
-            align-items: center;
+            flex-direction: column; /* ژێر یەک */
+            align-items: center;    /* ناوەڕاست */
+            justify-content: center;
             margin: 0 10px;
             direction: ltr;
+            line-height: 1; /* بۆ ئەوەی زۆر لێک دوور نەکەونەوە */
+            vertical-align: middle;
         }
+
         .t-letter-a {
-            font-size: 1.4rem;
+            font-size: 1.2rem; /* قەبارەی پیتی A */
             /* 80% Blue, 20% Yellow */
             background: linear-gradient(90deg, var(--blue) 80%, var(--yellow) 80%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-right: 2px;
-            filter: drop-shadow(0 0 5px rgba(0, 123, 255, 0.5));
+            margin-right: 0;
+            margin-bottom: -3px; /* کەمێک نزیکتر لە وشەی Center */
+            filter: drop-shadow(0 0 5px rgba(0, 0, 254, 0.5));
         }
+
         .t-word-center {
-            font-size: 1.1rem;
+            font-size: 0.7rem; /* قەبارەی Center */
             color: var(--yellow);
-            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+            text-shadow: 0 0 5px rgba(254, 255, 0, 0.5);
+            letter-spacing: 0.5px;
         }
 
         .t-highlight { 
             color: var(--yellow); 
             font-weight: 800; 
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+            text-shadow: 0 0 10px rgba(254, 255, 0, 0.4);
         }
         
         .t-phone {
@@ -378,7 +438,7 @@
             border-radius: 20px; text-align: center; transition: 0.3s; cursor: pointer;
             display: flex; flex-direction: column; align-items: center; gap: 10px;
         }
-        .grid-item:active { transform: scale(0.95); background: rgba(0, 123, 255, 0.1); }
+        .grid-item:active { transform: scale(0.95); background: rgba(0, 0, 254, 0.1); }
         .grid-icon { font-size: 1.8rem; color: var(--yellow); margin-bottom: 5px; }
         .grid-text { font-size: 0.9rem; font-weight: bold; }
 
@@ -405,6 +465,7 @@
             position: relative;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             transition: transform 0.3s;
+            cursor: pointer;
         }
         
         .shop-card:active {
@@ -416,6 +477,7 @@
             height: 100%; 
             object-fit: cover; 
             filter: brightness(0.9);
+            pointer-events: none; /* Let the card handle click */
         }
 
         /* --- Reviews --- */
@@ -517,7 +579,7 @@
         .fab-container {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             background: rgba(20, 20, 20, 0.9); backdrop-filter: blur(15px);
-            padding: 10px 25px; border-radius: 50px; border: 1px solid rgba(255, 234, 0, 0.2);
+            padding: 10px 25px; border-radius: 50px; border: 1px solid rgba(254, 255, 0, 0.2);
             display: flex; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 900;
         }
         .fab-btn { font-size: 1.4rem; color: #fff; transition: 0.3s; position: relative; cursor: pointer;}
@@ -540,6 +602,49 @@
         }
         .modal.open .modal-content { transform: scale(1); }
         .close-modal { position: absolute; top: 10px; right: 15px; color: #fff; font-size: 1.5rem; cursor: pointer; z-index: 10; }
+
+        /* --- INSTALL PROMPT MODAL --- */
+        .install-icon-wrapper {
+            width: 80px; height: 80px; margin: 0 auto 15px; 
+            background: #000; border-radius: 20px; 
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid var(--yellow);
+            box-shadow: 0 0 20px rgba(254, 255, 0, 0.2);
+        }
+        .install-btn {
+            background: linear-gradient(90deg, var(--blue), #0000aa);
+            color: #fff; border: none; padding: 12px 30px; 
+            border-radius: 50px; font-size: 1rem; font-weight: bold; 
+            margin-top: 15px; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,254, 0.4);
+        }
+        .ios-instruction {
+            margin-top: 15px; font-size: 0.9rem; color: #ccc;
+            background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px;
+        }
+
+        /* --- LIGHTBOX MODAL (New for Gallery) --- */
+        .lightbox-content {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .lightbox-img {
+            max-width: 95%;
+            max-height: 80vh;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            border: 2px solid var(--yellow);
+        }
+        .lightbox-close {
+            position: absolute; top: 20px; right: 20px; color: #fff; font-size: 2rem; background: rgba(0,0,0,0.5); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 2005;
+        }
 
         .barcode-img { width: 200px; height: 200px; margin: 20px auto; display: block; border: 4px solid #fff; border-radius: 10px; }
 
@@ -701,6 +806,27 @@
         </div>
     </div>
 
+    <div class="modal" id="installModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeInstallModal()">×</span>
+            <div class="install-icon-wrapper">
+                <span style="font-size: 2rem; font-weight: 900; color: #fff;">A</span>
+            </div>
+            <h2 style="color: var(--blue); margin-bottom: 10px;">دابەزاندنی ئەپڵیکەیشن</h2>
+            <p style="color: #ccc; font-size: 0.9rem;">بۆ ئەزموونێکی باشتر، بەرنامەکە دابەزێنە ناو مۆبایلەکەت.</p>
+            
+            <div id="androidInstallBtn" style="display:none;">
+                <button class="install-btn" onclick="installPWA()">دابەزاندن (Install)</button>
+            </div>
+
+            <div id="iosInstallMsg" class="ios-instruction" style="display:none;">
+                <p>بۆ ئایفۆن:</p>
+                <p>1. پەنجە بنێ بە <i class="fas fa-share-square"></i> (Share)</p>
+                <p>2. پاشان <i class="fas fa-plus-square"></i> Add to Home Screen هەڵبژێرە</p>
+            </div>
+        </div>
+    </div>
+
     <div class="app-container">
         
         <header class="header">
@@ -745,7 +871,7 @@
                     <span class="t-highlight">(ئیڤان)</span>
                     <span class="t-phone">07701353103</span>
                 </span>
-
+                
                 <span class="ticker-item">
                     <span class="ticker-logo">
                         <span class="t-letter-a">A</span>
@@ -758,7 +884,7 @@
         <section class="hero">
             <div id="logoNameOverlay" class="logo-name-text"></div>
 
-            <div class="hero-circle-logo" id="logoSlideshow">
+            <div class="hero-circle-logo" id="logoSlideshow" onclick="toggleMusic(true)">
                 <img src="1.jpg" class="logo-slide-img active" alt="Slide 1">
                 <img src="2.jpg" class="logo-slide-img" alt="Slide 2">
                 <img src="3.jpg" class="logo-slide-img" alt="Slide 3">
@@ -800,17 +926,17 @@
 
         <div class="section-title">وێنەی ناو دووکان</div>
         <div class="shop-gallery">
-            <div class="shop-card"><img src="s1.jpg" class="shop-img" alt="Shop 1"></div>
-            <div class="shop-card"><img src="s2.jpg" class="shop-img" alt="Shop 2"></div>
-            <div class="shop-card"><img src="s3.jpg" class="shop-img" alt="Shop 3"></div>
-            <div class="shop-card"><img src="s4.jpg" class="shop-img" alt="Shop 4"></div>
-            <div class="shop-card"><img src="s5.jpg" class="shop-img" alt="Shop 5"></div>
-            <div class="shop-card"><img src="s6.jpg" class="shop-img" alt="Shop 6"></div>
-            <div class="shop-card"><img src="s7.jpg" class="shop-img" alt="Shop 7"></div>
-            <div class="shop-card"><img src="s8.jpg" class="shop-img" alt="Shop 8"></div>
-            <div class="shop-card"><img src="s9.jpg" class="shop-img" alt="Shop 9"></div>
-            <div class="shop-card"><img src="s10.jpg" class="shop-img" alt="Shop 10"></div>
-            <div class="shop-card"><img src="s11.jpg" class="shop-img" alt="Shop 11"></div>
+            <div class="shop-card" onclick="openLightbox('s1.jpg')"><img src="s1.jpg" class="shop-img" alt="Shop 1"></div>
+            <div class="shop-card" onclick="openLightbox('s2.jpg')"><img src="s2.jpg" class="shop-img" alt="Shop 2"></div>
+            <div class="shop-card" onclick="openLightbox('s3.jpg')"><img src="s3.jpg" class="shop-img" alt="Shop 3"></div>
+            <div class="shop-card" onclick="openLightbox('s4.jpg')"><img src="s4.jpg" class="shop-img" alt="Shop 4"></div>
+            <div class="shop-card" onclick="openLightbox('s5.jpg')"><img src="s5.jpg" class="shop-img" alt="Shop 5"></div>
+            <div class="shop-card" onclick="openLightbox('s6.jpg')"><img src="s6.jpg" class="shop-img" alt="Shop 6"></div>
+            <div class="shop-card" onclick="openLightbox('s7.jpg')"><img src="s7.jpg" class="shop-img" alt="Shop 7"></div>
+            <div class="shop-card" onclick="openLightbox('s8.jpg')"><img src="s8.jpg" class="shop-img" alt="Shop 8"></div>
+            <div class="shop-card" onclick="openLightbox('s9.jpg')"><img src="s9.jpg" class="shop-img" alt="Shop 9"></div>
+            <div class="shop-card" onclick="openLightbox('s10.jpg')"><img src="s10.jpg" class="shop-img" alt="Shop 10"></div>
+            <div class="shop-card" onclick="openLightbox('s11.jpg')"><img src="s11.jpg" class="shop-img" alt="Shop 11"></div>
         </div>
 
         <div class="section-title" style="margin-top: 20px;">ڕای مشتەرییەکان</div>
@@ -866,10 +992,17 @@
 
     <div class="fab-container">
         <div class="fab-btn" data-tooltip="پەیوەندی" onclick="openCallModal()"><i class="fas fa-phone-alt"></i></div>
-        <div class="fab-btn" data-tooltip="موزیک" onclick="toggleMusic()"><i class="fas fa-music" id="musicIcon"></i></div>
+        <div class="fab-btn" data-tooltip="موزیک" onclick="toggleMusic(false)"><i class="fas fa-music" id="musicIcon"></i></div>
         <div class="fab-btn" data-tooltip="نەخشە" onclick="window.open('https://maps.app.goo.gl/yoSfMiZaPbDMgZ1G6')"><i class="fas fa-map-marker-alt"></i></div>
         <div class="fab-btn" data-tooltip="بارکۆد" onclick="openBarcode()"><i class="fas fa-qrcode"></i></div>
         <div class="fab-btn" data-tooltip="شەیرکردن" onclick="shareLink()"><i class="fas fa-share-alt"></i></div>
+    </div>
+
+    <div class="modal" id="lightboxModal" onclick="closeLightbox()">
+        <div class="lightbox-close">×</div>
+        <div class="lightbox-content">
+            <img id="lightboxImage" class="lightbox-img" src="" alt="Full Image">
+        </div>
     </div>
 
     <div class="modal" id="barcodeModal">
@@ -920,17 +1053,75 @@
             <h2 style="color: var(--blue); margin-bottom: 15px;">پەیوەندی بکە</h2>
             <p style="color: #ccc; margin-bottom: 20px;">سیمکارتێک هەڵبژێرە بۆ پەیوەندی</p>
             
-            <a href="tel:07701353103" class="sim-btn asia-btn">
+            <a href="tel:07701353103" class="sim-btn asia-btn" onclick="stopMusicForCall()">
                 <i class="fas fa-phone"></i> ئاسیا
             </a>
             
-            <a href="tel:07507597461" class="sim-btn korek-btn">
+            <a href="tel:07507597461" class="sim-btn korek-btn" onclick="stopMusicForCall()">
                 <i class="fas fa-phone"></i> کۆڕەک
             </a>
         </div>
     </div>
 
     <script>
+        // --- SERVICE WORKER REGISTRATION (PWA) ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('SW Registered', reg))
+                    .catch(err => console.log('SW Failed', err));
+            });
+        }
+
+        // --- INSTALL PROMPT LOGIC ---
+        let deferredPrompt;
+        const installModal = document.getElementById('installModal');
+        const androidBtn = document.getElementById('androidInstallBtn');
+        const iosMsg = document.getElementById('iosInstallMsg');
+
+        // Check if already in standalone mode (installed)
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+        if (!isStandalone) {
+            // Android Prompt
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                // Show modal automatically after 5 seconds
+                setTimeout(() => {
+                    installModal.classList.add('open');
+                    androidBtn.style.display = 'block';
+                    iosMsg.style.display = 'none';
+                }, 5000);
+            });
+
+            // iOS Check
+            const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
+            if (isIos) {
+                 setTimeout(() => {
+                    installModal.classList.add('open');
+                    androidBtn.style.display = 'none';
+                    iosMsg.style.display = 'block';
+                }, 5000);
+            }
+        }
+
+        function closeInstallModal() {
+            installModal.classList.remove('open');
+        }
+
+        async function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    deferredPrompt = null;
+                }
+                closeInstallModal();
+            }
+        }
+
+
         // --- HELPER: Get Hour in Sulaymaniyah (Baghdad Time Zone) ---
         function getSulaymaniyahHour() {
             const now = new Date();
@@ -944,13 +1135,33 @@
             setTimeout(() => {
                 document.getElementById('preloader').classList.add('hide-preloader');
                 fireConfetti(); 
-                // Attempt to play music automatically, or wait for touch
-                tryAutoPlay();
+                
+                // --- TICKER LOGIC (DELAYED APPEARANCE) ---
+                setTimeout(() => {
+                    const ticker = document.querySelector('.ticker');
+                    ticker.classList.add('show-ticker'); 
+                    ticker.style.animationPlayState = 'running'; 
+                }, 3000);
+
             }, 3500); 
             
             checkStatus();
             setDynamicGreeting();
         });
+
+        // --- NEW LIGHTBOX FUNCTIONS ---
+        function openLightbox(src) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImage');
+            img.src = src;
+            modal.classList.add('open');
+            if(navigator.vibrate) navigator.vibrate(30);
+        }
+
+        function closeLightbox() {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('open');
+        }
 
         // --- 2. STATUS CHECKER ---
         function checkStatus() {
@@ -1019,15 +1230,15 @@
             logoImages[currentLogoIndex].classList.add('active');
 
             setTimeout(() => {
-                if (currentLogoIndex === 1) { // 2.jpg -> IVAN
+                if (currentLogoIndex === 1) { 
                     nameOverlay.innerHTML = '<span class="t-blue">I</span><span class="t-yellow">VAN</span>';
                     nameOverlay.classList.add('show');
                 } 
-                else if (currentLogoIndex === 2) { // 3.jpg -> AWARA
+                else if (currentLogoIndex === 2) { 
                     nameOverlay.innerHTML = '<span class="t-blue">A</span><span class="t-yellow">WARA</span>';
                     nameOverlay.classList.add('show');
                 } 
-                else if (currentLogoIndex === 3) { // 4.jpg -> HAMA
+                else if (currentLogoIndex === 3) { 
                     nameOverlay.innerHTML = '<span class="t-blue">H</span><span class="t-yellow">AMA</span>';
                     nameOverlay.classList.add('show');
                 } 
@@ -1040,12 +1251,11 @@
         }
         setTimeout(changeLogo, 4000);
 
-        // --- 6. INTERACTIONS (UPDATED MUSIC LOGIC) ---
+        // --- 6. INTERACTIONS (UPDATED: NO WARNINGS) ---
         const music = document.getElementById('bgMusic');
         const musicIcon = document.getElementById('musicIcon');
         const heroLogo = document.getElementById('logoSlideshow');
 
-        // Update UI based on play state
         function updateMusicUI(play) {
             if (play) {
                 musicIcon.classList.add('spin-music');
@@ -1060,43 +1270,25 @@
             }
         }
 
-        // Toggle Music Button
-        function toggleMusic() {
+        // گۆڕانکاری: لابردنی مەرجی isMusicAllowed و لابردنی showToastMsg
+        function toggleMusic(isFromLogo) {
+            
             if (music.paused) {
                 music.play().then(() => {
                     updateMusicUI(true);
-                    showToastMsg("موزیک هەڵکرا 🎵");
                 }).catch(e => console.log("Audio Error:", e));
             } else {
                 music.pause();
                 updateMusicUI(false);
-                showToastMsg("موزیک کوژێنرایەوە 🔇");
             }
             if(navigator.vibrate) navigator.vibrate(30);
         }
 
-        // Auto Play Logic (With Fallback)
-        function tryAutoPlay() {
-            music.volume = 0.6; 
-            var promise = music.play();
-
-            if (promise !== undefined) {
-                promise.then(_ => {
-                    // Autoplay started!
-                    updateMusicUI(true);
-                }).catch(error => {
-                    // Autoplay was prevented. Wait for interaction.
-                    console.log("Autoplay blocked. Waiting for interaction.");
-                    document.addEventListener('click', startOnFirstTouch, { once: true });
-                    document.addEventListener('touchstart', startOnFirstTouch, { once: true });
-                    document.addEventListener('scroll', startOnFirstTouch, { once: true });
-                });
+        function stopMusicForCall() {
+            if (!music.paused) {
+                music.pause();
+                updateMusicUI(false);
             }
-        }
-
-        function startOnFirstTouch() {
-            music.play();
-            updateMusicUI(true);
         }
 
         // --- MODAL FUNCTIONS ---
@@ -1115,24 +1307,8 @@
         function closeCallModal() {
             document.getElementById('callModal').classList.remove('open');
         }
-
-        // --- TOAST FUNCTION (Generic) ---
-        function showToastMsg(msg) {
-            const toast = document.getElementById('customToast');
-            const originalContent = toast.innerHTML; // Store original
-            
-            // Set simple message
-            toast.innerHTML = `<i class="fas fa-info-circle"></i> <span>${msg}</span>`;
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-                // Restore original (for share link)
-                setTimeout(() => { toast.innerHTML = originalContent; }, 500);
-            }, 3000);
-        }
         
-        // --- SHARE LINK ---
+        // --- SHARE LINK (UPDATED: NO TOAST) ---
         function shareLink() {
             if (navigator.share) {
                 navigator.share({
@@ -1149,13 +1325,8 @@
                 textArea.focus();
                 textArea.select();
                 try {
-                    const successful = document.execCommand('copy');
-                    if(successful) {
-                        // Use the default toast content
-                        const toast = document.getElementById('customToast');
-                        toast.classList.add('show');
-                        setTimeout(() => { toast.classList.remove('show'); }, 3000);
-                    }
+                    // گۆڕانکاری: لابردنی کۆدی نیشاندانی Toast لێرە
+                    document.execCommand('copy');
                 } catch (err) { console.error('Copy failed', err); }
                 document.body.removeChild(textArea);
             }
